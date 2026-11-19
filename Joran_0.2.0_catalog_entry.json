@@ -1,0 +1,2365 @@
+{
+  "bluestsdk_v2": [
+    {
+      "ble_dev_id": "0x0D",
+      "ble_fw_id": "0xFF",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "0.2.0: ESKF attitude filter, on-board mag/accel calibration, PFD stream 60 Hz, panel profile stored on the instrument (units/thresholds adopted by any display), battery caution+alarm levels, zero-loss BLE acquisition, SD file transfer to the app (BLE file channel), selectable gyro range 1000/2000 dps, LED colour code + buzzer signalling; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxpro:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran BLE AHRS node - ESKF attitude (cube + e-compass), on-board mag calibration, USB-C console (any PC = diagnosis station), on-board doctor (self-check + gyro scale), persistent gyro alignment (fast boot), CPU+RAM monitors, RAM boot log, watchdog",
+      "fw_name": "Joran AHRS by flysys.ch",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "ble_dev_id": "0x0D",
+      "ble_fw_id": "0xF1",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "Install/reinstall Joran 0.2.0 over the air; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxpro:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "fw_url": "https://github.com/dorovl/joran-fw/raw/main/Joran_0.2.0_MKBOXPRO_RevAB.bin",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_name": "Joran AHRS",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "ble_dev_id": "0x11",
+      "ble_fw_id": "0xFF",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "0.2.0: ESKF attitude filter, on-board mag/accel calibration, PFD stream 60 Hz, panel profile stored on the instrument (units/thresholds adopted by any display), battery caution+alarm levels, zero-loss BLE acquisition, SD file transfer to the app (BLE file channel), selectable gyro range 1000/2000 dps, LED colour code + buzzer signalling; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxprob:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran BLE AHRS node - ESKF attitude (cube + e-compass), on-board mag calibration, USB-C console (any PC = diagnosis station), on-board doctor (self-check + gyro scale), persistent gyro alignment (fast boot), CPU+RAM monitors, RAM boot log, watchdog",
+      "fw_name": "Joran AHRS by flysys.ch",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "ble_dev_id": "0x11",
+      "ble_fw_id": "0xF1",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "Install/reinstall Joran 0.2.0 over the air; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxprob:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "fw_url": "https://github.com/dorovl/joran-fw/raw/main/Joran_0.2.0_MKBOXPRO_RevAB.bin",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_name": "Joran AHRS",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "ble_dev_id": "0x13",
+      "ble_fw_id": "0xFF",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "0.2.0: ESKF attitude filter, on-board mag/accel calibration, PFD stream 60 Hz, panel profile stored on the instrument (units/thresholds adopted by any display), battery caution+alarm levels, zero-loss BLE acquisition, SD file transfer to the app (BLE file channel), selectable gyro range 1000/2000 dps, LED colour code + buzzer signalling; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxproc:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran BLE AHRS node - ESKF attitude (cube + e-compass), on-board mag calibration, USB-C console (any PC = diagnosis station), on-board doctor (self-check + gyro scale), persistent gyro alignment (fast boot), CPU+RAM monitors, RAM boot log, watchdog",
+      "fw_name": "Joran AHRS by flysys.ch",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "ble_dev_id": "0x13",
+      "ble_fw_id": "0xF1",
+      "brd_name": "STEVAL-MKBOXPRO",
+      "changelog": "Install/reinstall Joran 0.2.0 over the air; 2026-11-19: no double arithmetic left in the filter, the calibrations, the clock or the printing, the GNSS height on the modem's EGM96 geoid, the stale BLE link to the GNSS modem handled, BLE command retries 0, the PnP-Like layer removed",
+      "characteristics": [
+        {
+          "max_write_length": 20,
+          "name": "Debug Console stdin/stdout",
+          "uuid": "00000001-000E-11e1-9ab4-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Ext Configuration",
+          "uuid": "00000014-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Sensor Fusion quaternion (ESKF attitude, the app's 3D cube; qi/qj/qk/qw as float32)",
+          "uuid": "00000080-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "E-Compass (ESKF magnetic heading)",
+          "uuid": "00000040-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Temperature",
+          "uuid": "00010000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Battery",
+          "uuid": "00020000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Pressure",
+          "uuid": "00100000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Magnetometer",
+          "uuid": "00200000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Gyroscope",
+          "uuid": "00400000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 20,
+          "name": "Accelerometer",
+          "uuid": "00800000-0001-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "max_write_length": 244,
+          "name": "SD file channel (sd get/put payload: chunks, credits, CRC32)",
+          "uuid": "00000022-0002-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "qx x 10000 (qw >= 0, carried at the frame tail)",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qy x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "qz x 10000",
+              "type": "Int16"
+            },
+            {
+              "length": 2,
+              "name": "Heading",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Turn rate (signed)",
+              "type": "Int16",
+              "unit": "0.01 dps"
+            },
+            {
+              "length": 2,
+              "name": "Slip",
+              "type": "Int16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 2,
+              "name": "Load factor",
+              "type": "Int16",
+              "unit": "0.001 g"
+            },
+            {
+              "length": 2,
+              "name": "VSI",
+              "type": "Int16",
+              "unit": "ft/min"
+            },
+            {
+              "length": 4,
+              "name": "Baro altitude vs uplinked QNH",
+              "type": "Int32",
+              "unit": "0.1 ft"
+            },
+            {
+              "length": 1,
+              "name": "Flags (b0 ESKF run, b1 mag fresh, b2 baro ok, b3 QNH set, b4 sustained turn, b5 stationary, b6 accel clipping)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "qw x 10000 (reconstruction near |qw| = 0 is ill-conditioned, so qw travels)",
+              "type": "Int16"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "FlySys PFD frame (attitude + heading + turn rate + slip + load factor + baro altitude + VSI)",
+          "uuid": "00010000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "CPU load",
+              "type": "UInt16",
+              "unit": "0.1 %"
+            },
+            {
+              "length": 2,
+              "name": "Loop max",
+              "type": "UInt16",
+              "unit": "0.1 ms"
+            },
+            {
+              "length": 4,
+              "name": "Samples lost (aggregate)",
+              "type": "UInt32"
+            },
+            {
+              "length": 2,
+              "name": "Mag rejects",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "BLE TX fails (PFD frame)",
+              "type": "UInt16"
+            },
+            {
+              "length": 2,
+              "name": "Battery OCV",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery temperature",
+              "type": "Int16",
+              "unit": "0.1 C"
+            },
+            {
+              "length": 2,
+              "name": "Battery time left (-1 n/a)",
+              "type": "Int16",
+              "unit": "min"
+            },
+            {
+              "length": 4,
+              "name": "Uptime",
+              "type": "UInt32",
+              "unit": "s"
+            },
+            {
+              "length": 2,
+              "name": "SD free (0xFFFF unknown)",
+              "type": "UInt16",
+              "unit": "MB"
+            },
+            {
+              "length": 1,
+              "name": "SD state (0 none/err, 1 idle, 2 recording)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Alarm mask (LED anomaly bits)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "GPS coarse (b0-1 fix, b2-7 sats/4)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Caution mask (b0 battery below warn - amber, no ack)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "QNH (instrument altimeter setting, adopt at connect)",
+              "type": "UInt16",
+              "unit": "0.1 hPa"
+            },
+            {
+              "length": 1,
+              "name": "Panel speed unit (0 km/h, 1 kt, 2 mph)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel altitude unit (0 m, 1 ft)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel VSI unit (0 m/s, 1 ft/min)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel pressure unit (0 mbar, 1 inHg)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel aux field id",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Panel flags (b0 pfd60, b1 gps10, b2 compass mag, b3 stored, b4 mag auto on, b5 mag auto saturated, b6 gyro fs 2000)",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "Battery warn threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            },
+            {
+              "length": 2,
+              "name": "Battery critical threshold",
+              "type": "UInt16",
+              "unit": "mV"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Health telemetry (battery extras, CPU, lost samples, SD, alarms)",
+          "uuid": "00020000-0003-11e1-ac36-0002a5d5c51b"
+        },
+        {
+          "format_notify": [
+            {
+              "length": 2,
+              "name": "timestamp",
+              "type": "UInt16"
+            },
+            {
+              "length": 4,
+              "name": "Latitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Longitude",
+              "type": "Int32",
+              "unit": "1e-7 deg"
+            },
+            {
+              "length": 4,
+              "name": "Altitude MSL",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 2,
+              "name": "Ground speed",
+              "type": "Int16",
+              "unit": "cm/s"
+            },
+            {
+              "length": 2,
+              "name": "Track",
+              "type": "UInt16",
+              "unit": "0.01 deg"
+            },
+            {
+              "length": 1,
+              "name": "Fix type (0 none, 2 2D, 3 3D)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Satellites used",
+              "type": "UInt8"
+            },
+            {
+              "length": 2,
+              "name": "pDOP x 100",
+              "type": "UInt16"
+            },
+            {
+              "length": 1,
+              "name": "Source (0 GNSS, 1 UWB, 2 VISION)",
+              "type": "UInt8"
+            },
+            {
+              "length": 1,
+              "name": "Reserved",
+              "type": "UInt8"
+            },
+            {
+              "length": 4,
+              "name": "Local X (right of ref camera, 0 for GNSS)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Y (forward)",
+              "type": "Int32",
+              "unit": "mm"
+            },
+            {
+              "length": 4,
+              "name": "Local Z (up)",
+              "type": "Int32",
+              "unit": "mm"
+            }
+          ],
+          "max_write_length": 20,
+          "name": "Position solution (GNSS u-blox / UWB / vision)",
+          "uuid": "00030000-0003-11e1-ac36-0002a5d5c51b"
+        }
+      ],
+      "cloud_apps": [],
+      "dtmi": "dtmi:appconfig:steval_mkboxproc:FP_SNS_STBOX1_BLESensorsPnPL;1",
+      "fota": {
+        "bootloader_type": "none",
+        "fw_url": "https://github.com/dorovl/joran-fw/raw/main/Joran_0.2.0_MKBOXPRO_RevAB.bin",
+        "max_chunk_length": 0,
+        "max_divisor_constraint": 0,
+        "partial_fota": 0,
+        "type": "fast"
+      },
+      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_name": "Joran AHRS",
+      "fw_version": "0.2.0",
+      "maturity": "release",
+      "option_bytes": [
+        {
+          "format": "enum_string",
+          "name": "Running on: ",
+          "string_values": [
+            {
+              "display_name": "Bank 1",
+              "value": 1
+            },
+            {
+              "display_name": "Bank 2",
+              "value": 2
+            }
+          ],
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
