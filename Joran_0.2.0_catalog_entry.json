@@ -765,7 +765,7 @@
         "partial_fota": 0,
         "type": "fast"
       },
-      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_desc": "Joran AHRS installer - downloads from GitHub",
       "fw_name": "Joran AHRS",
       "fw_version": "0.2.0",
       "maturity": "release",
@@ -1552,7 +1552,7 @@
         "partial_fota": 0,
         "type": "fast"
       },
-      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_desc": "Joran AHRS installer - downloads from GitHub",
       "fw_name": "Joran AHRS",
       "fw_version": "0.2.0",
       "maturity": "release",
@@ -2339,7 +2339,7 @@
         "partial_fota": 0,
         "type": "fast"
       },
-      "fw_desc": "Joran AHRS installer - downloads from flysys.ch",
+      "fw_desc": "Joran AHRS installer - downloads from GitHub",
       "fw_name": "Joran AHRS",
       "fw_version": "0.2.0",
       "maturity": "release",
